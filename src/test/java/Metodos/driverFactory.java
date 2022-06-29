@@ -3,7 +3,11 @@ package Metodos;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -23,6 +27,7 @@ public class driverFactory extends Metodos {
 
 		for (int i = 1; i < size; i++) {
 			WebElement menu = driver.findElement(By.xpath("(//div[@class='card mt-4 top-card'])[" + i + "]"));
+
 			if (menu.isDisplayed()) {
 				scroll(0, 300);
 				menu.click();
@@ -120,18 +125,129 @@ public class driverFactory extends Metodos {
 		}
 
 	}
-	
+
 	public void validarCheckBox(int size) {
-		
-		for(int i = 1; i<size; i++) {
+
+		for (int i = 1; i < size; i++) {
+
 			WebElement element = driver.findElement(By.xpath("(//span[@class='rct-checkbox'])[" + i + "]"));
+
 			if (element.isDisplayed()) {
 
 				assertTrue(element.isSelected());
-				
+
 			}
-			
+
 		}
 	}
 
+	public void SelecionarRadioButton(By elemento) {
+
+		WebElement element = driver.findElement(elemento);
+		element.click();
+
+	}
+
+	public void ValidarRadioButton(By elemento) {
+
+		WebElement checkboxElemento = driver.findElement(elemento);
+		assertTrue(checkboxElemento.isSelected());
+	}
+
+	public void ValidarResponseRadioButton(String textoEsperado, By elemento) {
+
+		WebElement element = driver.findElement(elemento);
+		assertEquals(textoEsperado, element.getText());
+
+	}
+
+	public void AdicionarFuncionario(String nome, String ultimoNome, String email, String idade, String salario,
+			String departamento) throws InterruptedException {
+
+		driver.findElement(By.id("addNewRecordButton")).click();
+		Thread.sleep(500);
+
+		if (driver.findElement(By.xpath("//div[@class='modal-content']")).isDisplayed()) {
+
+			type(By.id("firstName"), nome);
+			type(By.id("lastName"), ultimoNome);
+			type(By.id("userEmail"), email);
+			type(By.id("age"), idade);
+			type(By.id("salary"), salario);
+			type(By.id("department"), departamento);
+			clicar(By.id("submit"));
+
+		} else {
+
+			System.out.println("Elemento nao encontrado!");
+		}
+
+	}
+
+	public void validarHiperLinks(String textoEsperado, int numero) throws InterruptedException {
+
+		WebElement element = driver.findElement(By.xpath("(//div/p/a)[" + numero + "]"));
+
+		if (element.isDisplayed()) {
+			element.click();
+			Thread.sleep(500);
+			String text = driver.findElement(By.id("linkResponse")).getText();
+			assertEquals(textoEsperado, text);
+
+		}
+
+	}
+	
+	public void validarHiperLinksAba(int numero) throws InterruptedException {
+		
+		WebElement element = driver.findElement(By.xpath("(//div/p/a)[" + numero + "]"));
+
+		if (element.isDisplayed()) {
+			element.click();
+			Thread.sleep(500);
+			alternarAba(1);
+			assertEquals("https://demoqa.com/", driver.getCurrentUrl());
+			fecharAba();
+			alternarAba(0);
+			
+
+		}
+		
+		
+	}
+	
+public void metodoNet() throws IOException {
+		
+		
+
+		List<WebElement> links = driver.findElements(By.xpath("(//div)[60]/a"));
+		
+		
+		
+
+		for (int i = 1; i < links.size(); i++) {
+
+			WebElement ele = links.get(i);
+
+			String url = ele.getAttribute("href");
+			System.out.println("Total de links é: " + links.size());
+			URL url1 = new URL(url);
+			HttpURLConnection httpurlconnect = (HttpURLConnection) url1.openConnection();
+			httpurlconnect.setConnectTimeout(5000);
+			httpurlconnect.connect();
+
+			if (httpurlconnect.getResponseCode() == 301) {
+				System.out.println(url + " = " + httpurlconnect.getResponseMessage() + "OK");
+
+			}
+			if (httpurlconnect.getResponseCode() == 500) {
+
+				System.out.println(
+						url + " - " + httpurlconnect.getResponseMessage() + " - " + HttpURLConnection.HTTP_NOT_FOUND);
+				System.out.println(url + " = " + httpurlconnect.getResponseMessage() + " - BROKEN");
+
+			}else System.out.println("Nenhum dos status encontrado");
+
+		}
+	}
 }

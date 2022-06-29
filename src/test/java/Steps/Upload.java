@@ -7,30 +7,25 @@ import org.openqa.selenium.By;
 
 import Metodos.driverFactory;
 
-public class CheckBox extends driverFactory{
+public class Upload extends driverFactory{
 
 	@Before
 	public void setUp() throws Exception {
 		
 		iniciarTeste("chrome", "https://demoqa.com/elements");
-		acessarMenuElement(1);
+		acessarMenuElement(7);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		
-		//encerrarTeste();
 	}
 
 	@Test
-	public void validandoCheckBox() throws InterruptedException {
-		
-		expandirCheckBox(7);
-		clicar(By.xpath("//span[@class='rct-checkbox']"));
-		Thread.sleep(2000);
-		validarCheckBox(18);
-		
+	public void test() {
 
+		uploadArquivo(By.id("uploadFile"), "C://SQL/sampleFile.jpeg");
+
+		
 	}
 
 }
